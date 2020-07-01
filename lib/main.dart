@@ -1,40 +1,35 @@
+import 'package:Clatter/screens/chat-room.dart';
 import 'package:flutter/material.dart';
+import './screens/chat-room.dart';
+import 'package:provider/provider.dart';
+import './providers/message-center.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => MessageCetner(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Clatter',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Clatter',
-          style: TextStyle(color: Colors.black),
+      home: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/chat-background.png'),
+              fit: BoxFit.fill),
         ),
-        backgroundColor: Colors.white,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('Welcome to Clatter'),
-          ],
+        child: Chatroom(
+          roomName: 'Fake Clatter Room',
         ),
       ),
     );
