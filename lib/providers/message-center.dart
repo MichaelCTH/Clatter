@@ -1,31 +1,67 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import "package:flutter/foundation.dart";
+import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'dart:async';
+
 import '../models/Message.dart';
+
+const endpoint = 'http://localhost:3000/clatter/room/message';
 
 class MessageCetner with ChangeNotifier {
   String currentUser = 'Mike';
-  List<Message> messageHistory = [
-    Message('Jerry', 'How are you?', new DateTime.now(),
-        'assets/images/avatar.png'),
-    Message('Jerry', 'I just back to town', new DateTime.now(),
-        'assets/images/avatar.png'),
-    Message('Jerry', 'are you free tomorrow', new DateTime.now(),
-        'assets/images/avatar.png'),
-    Message('Jerry', 'let\'s hang out and grab some drinks', new DateTime.now(),
-        'assets/images/avatar.png'),
-    Message('Jerry', 'first round on me :)', new DateTime.now(),
-        'assets/images/avatar.png'),
-  ];
+  List<Message> messageHistory = [];
 
-  void appendMessage(String name, String msg, String imageUrl) {
-    this.messageHistory.add(Message(name, msg, new DateTime.now(), imageUrl));
-    notifyListeners();
+  MessageCetner() {
+    _fetchMessage().then((value) {
+      if (value == null) {
+        return;
+      }
+      messageHistory = parsePhotos(value);
+      notifyListeners();
+    });
   }
 
-  int value = 0;
+  void appendMessage(String name, String msg, String imageUrl) {
+    _postMessage({
+      'name': name,
+      'message': msg,
+      'createdTime': new DateTime.now().toIso8601String(),
+      'imageUrl': imageUrl,
+    }).then((value) {
+      if (value) {
+        this.messageHistory.add(
+            Message(name, msg, new DateTime.now().toIso8601String(), imageUrl));
+        notifyListeners();
+      }
+    });
+  }
 
-  void increment() {
-    value += 1;
-    notifyListeners();
+  List<Message> parsePhotos(String responseBody) {
+    final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+    return parsed.map<Message>((json) => Message.fromJson(json)).toList();
+  }
+
+  Future<String> _fetchMessage() async {
+    try {
+      final response = await http.get(endpoint);
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return null;
+      }
+    } on SocketException {
+      return null;
+    }
+  }
+
+  Future<bool> _postMessage(dynamic body) async {
+    try {
+      final response = await http.post(endpoint, body: body);
+      return response.statusCode == 200;
+    } on SocketException {
+      return false;
+    }
   }
 }

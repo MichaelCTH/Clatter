@@ -32,14 +32,7 @@ class MessageBar extends StatelessWidget {
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.all(15.0),
               ),
-              onSubmitted: (value) {
-                if (value.isEmpty) {
-                  return;
-                }
-                Provider.of<MessageCetner>(context, listen: false)
-                    .appendMessage('Mike', value, 'assets/images/Mac.jpg');
-                this._clearTextInput();
-              },
+              onSubmitted: (value) => _sendMessage(value, context),
             ),
           ),
           Icon(
@@ -55,5 +48,14 @@ class MessageBar extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  _sendMessage(value, context) {
+    if (value.isEmpty) {
+      return;
+    }
+    Provider.of<MessageCetner>(context, listen: false)
+        .appendMessage('Mike', value, 'assets/images/Mac.jpg');
+    this._clearTextInput();
   }
 }
