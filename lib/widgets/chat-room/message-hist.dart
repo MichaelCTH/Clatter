@@ -11,11 +11,15 @@ class MessageHist extends StatelessWidget {
         final listLen = messageCenter.messageHistory.length;
         return ListView.builder(
           shrinkWrap: true,
-          reverse: true,
+          reverse: listLen > 9,
           controller: messageCenter.scrollController,
           itemCount: listLen,
           itemBuilder: (BuildContext cxt, int index) {
-            var item = messageCenter.messageHistory[listLen - index - 1];
+            var idx = index;
+            if (listLen > 9) {
+              idx = listLen - index - 1;
+            }
+            var item = messageCenter.messageHistory[idx];
             return MessageLog(
               name: item.user,
               msg: item.message,

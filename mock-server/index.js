@@ -48,10 +48,10 @@ app.get("/clatter/room/message", (req, res) => {
 
 app.post("/clatter/room/message", (req, res) => {
   const data = req.body;
-  if (!data.name || !data.message || !data.createdTime || !data.imageUrl) {
+  if (!data.name || !data.message || !data.imageUrl) {
     res.sendStatus(400);
   }
-  messageList.push(new Message(data.name, data.message, data.createdTime, data.imageUrl));
+  messageList.push(new Message(data.name, data.message, new Date().toDateString(), data.imageUrl));
   res.sendStatus(200);
 });
 

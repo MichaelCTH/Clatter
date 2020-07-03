@@ -30,7 +30,6 @@ class MessageCenter with ChangeNotifier {
     _postMessage({
       'name': name,
       'message': msg,
-      'createdTime': new DateTime.now().toIso8601String(),
       'imageUrl': imageUrl,
     }).then((value) {
       if (value) {
