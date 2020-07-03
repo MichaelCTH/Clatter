@@ -15,7 +15,7 @@ let chatHistory = [];
 
 io.on("connection", (socket) => {
   socket.on("all messages", () => {
-    socket.emit("all messages", chatHistory);
+    socket.emit("all messages", JSON.stringify(chatHistory));
   });
 
   socket.on("new message", (data) => {
