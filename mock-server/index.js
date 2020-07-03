@@ -1,58 +1,25 @@
-const express = require("express");
-const bodyParser = require("body-parser");
+// Setup basic express server
+var express = require("express");
+var app = express();
+var path = require("path");
+var server = require("http").createServer(app);
+var io = require("socket.io")(server);
+var port = process.env.PORT || 3000;
 
-const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
-const port = 3000;
-
-class Message {
-  constructor(name, message, createdTime, imageUrl) {
-    this.name = name;
-    this.message = message;
-    this.createdTime = createdTime;
-    this.imageUrl = imageUrl;
-  }
-}
-
-let messageList = [
-  new Message("Jerry", "How are you? Bro", new Date().toDateString(), "assets/images/avatar.png"),
-  new Message(
-    "Jerry",
-    "I'm just back to town",
-    new Date().toDateString(),
-    "assets/images/avatar.png"
-  ),
-  new Message(
-    "Jerry",
-    "are you free tomorrow night?",
-    new Date().toDateString(),
-    "assets/images/avatar.png"
-  ),
-  new Message(
-    "Jerry",
-    "let's hang out and grab some drinks",
-    new Date().toDateString(),
-    "assets/images/avatar.png"
-  ),
-  new Message(
-    "Jerry",
-    "first round on me :p",
-    new Date().toDateString(),
-    "assets/images/avatar.png"
-  ),
-];
-
-app.get("/clatter/room/message", (req, res) => {
-  res.json(messageList);
+server.listen(port, () => {
+  console.log("Server listening at port %d", port);
 });
 
-app.post("/clatter/room/message", (req, res) => {
-  const data = req.body;
-  if (!data.name || !data.message || !data.imageUrl) {
-    res.sendStatus(400);
-  }
-  messageList.push(new Message(data.name, data.message, new Date().toDateString(), data.imageUrl));
-  res.sendStatus(200);
-});
+// Chatroom
+let chatHistory = [];
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+io.on("connection", (socket) => {
+  socket.on("all messages", () => {
+    socket.emit("all messages", chatHistory);
+  });
+
+  socket.on("new message", (data) => {
+    chatHistory.push(data);
+    socket.broadcast.emit("new message", data);
+  });
+});
