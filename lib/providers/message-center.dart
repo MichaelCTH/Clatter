@@ -9,17 +9,20 @@ import '../models/Message.dart';
 
 const endpoint = 'http://localhost:3000/clatter/room/message';
 
-class MessageCetner with ChangeNotifier {
+class MessageCenter with ChangeNotifier {
   String currentUser = 'Mike';
   List<Message> messageHistory = [];
+  ScrollController scrollController = new ScrollController();
 
-  MessageCetner() {
-    _fetchMessage().then((value) {
-      if (value == null) {
-        return;
-      }
-      messageHistory = parsePhotos(value);
-      notifyListeners();
+  MessageCenter() {
+    Timer.periodic(new Duration(seconds: 1), (timer) {
+      _fetchMessage().then((value) {
+        if (value == null) {
+          return;
+        }
+        messageHistory = parsePhotos(value);
+        notifyListeners();
+      });
     });
   }
 

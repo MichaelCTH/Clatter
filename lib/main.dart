@@ -7,7 +7,7 @@ import './providers/message-center.dart';
 void main() {
   runApp(
     ChangeNotifierProvider(
-      create: (_) => MessageCetner(),
+      create: (_) => MessageCenter(),
       child: MyApp(),
     ),
   );

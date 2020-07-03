@@ -17,18 +17,26 @@ class MessageLog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _isMyself() =>
-        Provider.of<MessageCetner>(context, listen: false).currentUser ==
+        Provider.of<MessageCenter>(context, listen: false).currentUser ==
         this.name;
+
+    var msgLen = 200.0;
+    if (this.msg.length < 25) {
+      msgLen = this.msg.length * 6.5 + 29;
+    }
 
     return Container(
       margin: EdgeInsets.all(10),
       child: Row(
         textDirection: _isMyself() ? TextDirection.rtl : TextDirection.ltr,
         children: <Widget>[
-          Image(
-            image: AssetImage(this.imageUrl),
-            width: 50,
-            height: 50,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12.0),
+            child: Image(
+              image: AssetImage(this.imageUrl),
+              width: 48,
+              height: 48,
+            ),
           ),
           Container(
             margin: EdgeInsets.only(left: 10, right: 10),
@@ -40,7 +48,7 @@ class MessageLog extends StatelessWidget {
                 Text('${this.name}'),
                 SizedBox(height: 2),
                 Container(
-                  width: 200,
+                  width: msgLen,
                   decoration: BoxDecoration(
                       color:
                           _isMyself() ? Colors.lightGreenAccent : Colors.white,

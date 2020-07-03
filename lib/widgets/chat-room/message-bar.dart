@@ -14,12 +14,13 @@ class MessageBar extends StatelessWidget {
     return Container(
       color: Colors.grey[100],
       height: 60.0,
+      padding: EdgeInsets.only(left: 12, right: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           Icon(
             Icons.keyboard_voice,
-            color: Colors.black,
+            color: Colors.black54,
             size: 30.0,
           ),
           Container(
@@ -37,12 +38,12 @@ class MessageBar extends StatelessWidget {
           ),
           Icon(
             Icons.tag_faces,
-            color: Colors.black,
+            color: Colors.black54,
             size: 30.0,
           ),
           Icon(
             Icons.add_circle_outline,
-            color: Colors.black,
+            color: Colors.black54,
             size: 30.0,
           ),
         ],
@@ -54,8 +55,13 @@ class MessageBar extends StatelessWidget {
     if (value.isEmpty) {
       return;
     }
-    Provider.of<MessageCetner>(context, listen: false)
-        .appendMessage('Mike', value, 'assets/images/Mac.jpg');
+    var provider = Provider.of<MessageCenter>(context, listen: false);
+    provider.appendMessage('Mike', value, 'assets/images/Mac.jpg');
+    provider.scrollController.animateTo(
+      0.0,
+      curve: Curves.easeOut,
+      duration: const Duration(milliseconds: 1000),
+    );
     this._clearTextInput();
   }
 }
